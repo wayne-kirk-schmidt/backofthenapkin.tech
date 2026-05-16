@@ -63,6 +63,10 @@
   </footer>
 
   <script>
+    function slugify(str) {
+      return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+
     const frameworks = {
       insight:  ['Here\'s the thing.', 'Why we care.', 'What we could do.', 'What the outcome was.', 'What I learned.', 'Make it better.'],
       code:     ['Collect', 'Organize', 'Determine', 'Evolve', 'What I learned.', 'Make it better.'],
