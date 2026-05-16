@@ -18,7 +18,7 @@
     <div class="nav-availability">Wayne Kirk Schmidt &nbsp;·&nbsp; changeis.io</div>
     <ul class="nav-links">
       <li><a href="#main">Entries</a></li>
-      <li><a href="mailto:wayne.kirk.schmidt@gmail.com">Contact</a></li>
+      <li><a href="https://waynekirkschmidt.me">Contact</a></li>
     </ul>
   </nav>
 
@@ -35,7 +35,7 @@
       </h1>
     </aside>
 
-    <!-- RIGHT: ENTRIES + PREVIEW -->
+    <!-- RIGHT: ENTRIES -->
     <div class="entries-panel">
 
       <div class="section-divider">
@@ -43,21 +43,10 @@
         <div class="divider-line"></div>
       </div>
 
-      <div class="posts-layout">
-
-        <!-- ENTRY LIST -->
-        <div class="post-list" id="post-list">
-          <div class="post-loading">Loading...</div>
-        </div>
-
-        <!-- PREVIEW -->
-        <div class="post-preview" id="post-preview">
-          <div class="preview-empty">
-            <p class="preview-empty-text">Select an entry to preview.</p>
-          </div>
-        </div>
-
+      <div class="entry-list" id="post-list">
+        <div class="post-loading">Loading...</div>
       </div>
+
     </div>
 
   </main>
@@ -91,40 +80,33 @@
       return { meta, body: match[2] };
     }
 
-    async function loadPreview(post) {
-      const preview = document.getElementById('post-preview');
-      preview.innerHTML = '<div class="preview-loading">Loading...</div>';
+    async function buildCard(post) {
+      let excerpt = '';
       try {
         const res = await fetch('./posts/' + post.id + '.md');
         const raw = await res.text();
         const { body } = parseFrontmatter(raw);
         const firstSection = body.split(/\n## /)[1] || body;
-        const firstSectionText = firstSection.split('\n').slice(1, 6).join('\n');
-        preview.innerHTML =
-          '<div class="preview-inner">' +
-            '<div class="preview-kicker">' +
-              '<span>' + post.type + '</span>' +
-              '<span>' + post.topic + '</span>' +
-              '<span>' + formatDate(post.date) + '</span>' +
-            '</div>' +
-            '<h2 class="preview-title">' + post.title + '</h2>' +
-            '<p class="preview-tagline">' + post.tagline + '</p>' +
-            '<div class="preview-excerpt">' + marked.parse(firstSectionText) + '</div>' +
-            '<a href="./post.html?post=' + post.id + '" class="btn-ghost preview-btn">Read the full entry &rarr;</a>' +
-          '</div>';
-      } catch(e) {
-        preview.innerHTML =
-          '<div class="preview-inner">' +
-            '<div class="preview-kicker">' +
-              '<span>' + post.type + '</span>' +
-              '<span>' + post.topic + '</span>' +
-              '<span>' + formatDate(post.date) + '</span>' +
-            '</div>' +
-            '<h2 class="preview-title">' + post.title + '</h2>' +
-            '<p class="preview-tagline">' + post.tagline + '</p>' +
-            '<a href="./post.html?post=' + post.id + '" class="btn-ghost preview-btn">Read the full entry &rarr;</a>' +
-          '</div>';
-      }
+        const firstSectionText = firstSection.split('\n').slice(1, 5).join('\n').trim();
+        excerpt = firstSectionText
+          ? '<div class="entry-excerpt">' + marked.parse(firstSectionText) + '</div>'
+          : '';
+      } catch(e) {}
+
+      return '<a class="entry-card reveal" href="./post.html?post=' + post.id + '">' +
+        '<div class="entry-card-header">' +
+          '<div class="entry-kicker">' +
+            '<span>' + post.type.toUpperCase() + '</span>' +
+            '<span>' + post.topic + '</span>' +
+            '<span>' + formatDate(post.date) + '</span>' +
+          '</div>' +
+          '<span class="entry-tag">' + post.topic + '</span>' +
+        '</div>' +
+        '<h2 class="entry-title">' + post.title + '</h2>' +
+        '<p class="entry-tagline">' + post.tagline + '</p>' +
+        (excerpt ? '<div class="entry-divider"></div>' + excerpt : '') +
+        '<span class="entry-read">Read the full entry &rarr;</span>' +
+      '</a>';
     }
 
     async function loadPosts() {
@@ -132,33 +114,15 @@
       try {
         const res = await fetch('./posts/index.json');
         const posts = await res.json();
+
         if (!posts || posts.length === 0) {
           list.innerHTML = '<div class="coming-soon">Coming soon.</div>';
           return;
         }
-        const visible = posts.slice(0, 6);
-        list.innerHTML = visible.map(function(post, i) {
-          return '<div class="post-row reveal live' + (i === 0 ? ' active' : '') + '" ' +
-            'data-id="' + post.id + '" ' +
-            'data-title="' + post.title.replace(/"/g, '&quot;') + '" ' +
-            'data-date="' + post.date + '" ' +
-            'data-type="' + post.type + '" ' +
-            'data-topic="' + post.topic + '" ' +
-            'data-tagline="' + post.tagline.replace(/"/g, '&quot;') + '" ' +
-            'onclick="selectPost(this)">' +
-            '<div class="post-meta">' +
-              '<span class="post-date">' + formatDate(post.date) + '</span>' +
-              '<span class="post-type">' + post.type.toUpperCase() + '</span>' +
-            '</div>' +
-            '<div class="post-body">' +
-              '<p class="post-title">' + post.title + '</p>' +
-              '<p class="post-summary">' + post.tagline + '</p>' +
-            '</div>' +
-            '<span class="post-tag">' + post.topic + '</span>' +
-          '</div>';
-        }).join('');
 
-        loadPreview(visible[0]);
+        const visible = posts.slice(0, 6);
+        const cards = await Promise.all(visible.map(buildCard));
+        list.innerHTML = cards.join('');
 
         setTimeout(function() {
           document.querySelectorAll('.reveal').forEach(function(el) {
@@ -169,21 +133,6 @@
       } catch(e) {
         list.innerHTML = '<div class="coming-soon">Coming soon.</div>';
       }
-    }
-
-    function selectPost(el) {
-      document.querySelectorAll('.post-row').forEach(function(r) {
-        r.classList.remove('active');
-      });
-      el.classList.add('active');
-      loadPreview({
-        id: el.dataset.id,
-        title: el.dataset.title,
-        date: el.dataset.date,
-        type: el.dataset.type,
-        topic: el.dataset.topic,
-        tagline: el.dataset.tagline
-      });
     }
 
     loadPosts();

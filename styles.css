@@ -594,3 +594,111 @@ footer {
     display: none;
   }
 }
+
+/* ── ENTRY CARDS ── */
+.entry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.entry-card {
+  display: block;
+  background: var(--frost);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.entry-card:hover {
+  background: var(--frost-md);
+  border-color: rgba(126,179,245,0.3);
+}
+
+.entry-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.entry-kicker {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sky);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.entry-kicker span + span::before {
+  content: '·';
+  margin-right: 8px;
+  opacity: 0.4;
+}
+
+.entry-tag {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  background: var(--frost);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.entry-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+  color: var(--white);
+  margin-bottom: 0.4rem;
+}
+
+.entry-tagline {
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--light);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.entry-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1rem 0;
+}
+
+.entry-excerpt {
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.entry-excerpt p { margin-bottom: 0.5rem; }
+.entry-excerpt p:last-child { margin-bottom: 0; }
+
+.entry-read {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sky);
+  display: inline-block;
+  margin-top: 0.75rem;
+  transition: opacity 0.15s;
+}
+
+.entry-card:hover .entry-read { opacity: 0.7; }
