@@ -1,20 +1,15 @@
 /* ============================================================
    post.css — backofthenapkin.tech
-   Light reading surface for post pages
+   Dark reading surface — matches site theme
    ============================================================ */
 
 body.post-page {
-  background-image: none;
-  background-color: #f5f2ec;
-  color: #1a1a1a;
-}
-
-body.post-page nav {
-  background: rgba(15,39,66,0.95);
-}
-
-body.post-page footer {
-  background: rgba(15,39,66,0.95);
+  background-image: url('./background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--white);
 }
 
 /* ── MAIN ── */
@@ -35,19 +30,19 @@ body.post-page footer {
   font-size: 0.65rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--brand);
+  color: var(--sky);
   text-decoration: none;
   margin-bottom: 2.5rem;
-  transition: color 0.15s;
+  transition: opacity 0.15s;
 }
 
-.post-back:hover { color: var(--accent); }
+.post-back:hover { opacity: 0.7; }
 
 /* ── HEADER ── */
 .post-header {
   margin-bottom: 2rem;
   padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid var(--border);
 }
 
 .post-kicker {
@@ -55,7 +50,7 @@ body.post-page footer {
   font-size: 0.65rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--brand);
+  color: var(--sky);
   display: flex;
   gap: 12px;
   margin-bottom: 1rem;
@@ -73,14 +68,14 @@ body.post-page footer {
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -1px;
-  color: var(--ink);
+  color: var(--white);
   margin-bottom: 1rem;
 }
 
 .post-tagline {
   font-size: 1.05rem;
   font-weight: 300;
-  color: #444;
+  color: var(--light);
   line-height: 1.6;
 }
 
@@ -88,52 +83,58 @@ body.post-page footer {
 .post-framework {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  border: 1px solid rgba(36,74,134,0.2);
+  border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 2.5rem;
-  background: #fff;
+  background: var(--frost);
 }
 
 .fw-step {
-  padding: 12px 16px;
-  border-right: 1px solid rgba(36,74,134,0.15);
+  padding: 10px 12px;
+  border-right: 1px solid var(--border);
 }
 
 .fw-step:last-child { border-right: none; }
 
 .fw-label {
   font-family: var(--mono);
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: var(--brand);
+  color: var(--sky);
   line-height: 1.4;
   display: block;
+  opacity: 0.8;
 }
 
 /* ── BODY ── */
 .post-body {
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: 300;
   line-height: 1.85;
-  color: #222;
+  color: var(--light);
 }
 
 .post-body p { margin-bottom: 1.25rem; }
 
 .post-body h2 {
   font-family: var(--mono);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--sky);
   margin: 2.5rem 0 0.75rem;
+  opacity: 0.8;
 }
 
-.post-body h2.make-it-better {
-  color: var(--accent);
+.post-body h2:last-of-type {
+  color: var(--sky);
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  opacity: 1;
 }
 
 .post-body ul,
@@ -143,39 +144,40 @@ body.post-page footer {
 
 .post-body li {
   margin-bottom: 0.5rem;
-  color: #333;
+  color: var(--light);
   line-height: 1.7;
 }
 
 .post-body blockquote {
   margin: 2rem 0;
   padding: 1rem 1.5rem;
-  border-left: 3px solid var(--brand);
-  background: rgba(36,74,134,0.05);
+  border-left: 3px solid var(--sky);
+  background: var(--frost);
   border-radius: 0 6px 6px 0;
   font-size: 1.05rem;
-  font-weight: 500;
+  font-weight: 400;
   font-style: italic;
-  color: var(--ink);
+  color: var(--white);
   line-height: 1.6;
 }
 
 .post-body code {
   font-family: var(--mono);
   font-size: 0.85em;
-  background: rgba(36,74,134,0.08);
+  background: var(--frost-md);
   padding: 2px 6px;
   border-radius: 4px;
-  color: var(--brand);
+  color: var(--sky);
 }
 
 .post-body pre {
-  background: var(--ink);
+  background: rgba(0,0,0,0.4);
   color: var(--sky);
   padding: 1.5rem;
   border-radius: 8px;
   overflow-x: auto;
   margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
 }
 
 .post-body pre code {
@@ -186,32 +188,24 @@ body.post-page footer {
 }
 
 .post-body a {
-  color: var(--accent);
+  color: var(--sky);
   text-decoration: underline;
   text-underline-offset: 3px;
-}
-
-/* ── MAKE IT BETTER ── */
-.post-body h2:last-of-type {
-  color: var(--accent);
-  margin-top: 3rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(0,0,0,0.1);
 }
 
 /* ── FOOTER NAV ── */
 .post-footnav {
   margin-top: 3.5rem;
   padding-top: 2rem;
-  border-top: 1px solid rgba(0,0,0,0.1);
+  border-top: 1px solid var(--border);
 }
 
 .btn-ghost-dark {
   background: transparent;
-  color: var(--ink);
+  color: var(--white);
   padding: 0.75rem 1.5rem;
   border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.2);
+  border: 1px solid var(--border);
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
@@ -220,15 +214,29 @@ body.post-page footer {
 }
 
 .btn-ghost-dark:hover {
-  background: rgba(0,0,0,0.05);
-  border-color: rgba(0,0,0,0.3);
+  background: var(--frost);
+  border-color: rgba(255,255,255,0.3);
 }
 
 /* ── MOBILE ── */
 @media (max-width: 640px) {
-  .post-main       { padding: 2.5rem 1.5rem 4rem; }
-  .post-framework  { grid-template-columns: repeat(2, 1fr); }
+  .post-main      { padding: 2.5rem 1.5rem 4rem; }
+  .post-framework { grid-template-columns: repeat(2, 1fr); }
   .fw-step:nth-child(2) { border-right: none; }
-  .fw-step:nth-child(3) { border-top: 1px solid rgba(36,74,134,0.15); }
-  .fw-step:nth-child(4) { border-top: 1px solid rgba(36,74,134,0.15); }
+  .fw-step:nth-child(3) { border-top: 1px solid var(--border); }
+  .fw-step:nth-child(4) { border-top: 1px solid var(--border); }
+}
+
+/* ── FRAMEWORK NAV ── */
+.post-framework a.fw-step {
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.post-framework a.fw-step:hover {
+  background: var(--frost-md);
+}
+
+.post-body h2 {
+  scroll-margin-top: 80px;
 }

@@ -29,23 +29,23 @@
   <main class="post-main">
     <div class="post-inner">
 
-      <a href="./index.html" class="post-back">← All posts</a>
+      <a href="./index.html" class="post-back">← Entries</a>
 
-      <!-- HEADER — populated by JS -->
+      <!-- HEADER: populated by JS -->
       <header class="post-header" id="post-header">
         <div class="post-kicker" id="post-kicker"></div>
         <h1 class="post-title" id="post-title"></h1>
         <p class="post-tagline" id="post-tagline"></p>
       </header>
 
-      <!-- FRAMEWORK BAR — populated by JS -->
+      <!-- FRAMEWORK BAR: populated by JS -->
       <div class="post-framework" id="post-framework"></div>
 
-      <!-- BODY — populated by JS -->
+      <!-- BODY: populated by JS -->
       <div class="post-body" id="post-body"></div>
 
       <div class="post-footnav">
-        <a href="./index.html" class="btn-ghost-dark">← Back to all posts</a>
+        <a href="./index.html" class="btn-ghost-dark">← Entries</a>
       </div>
 
     </div>
@@ -82,13 +82,12 @@
 
     function buildFramework(type) {
       const steps = frameworks[type] || frameworks.insight;
-      // Show first 4 steps as the framework bar
       const display = steps.slice(0, 4);
       return display.map(s => `
-        <div class="fw-step">
+        <a class="fw-step" href="#${slugify(s)}">
           <span class="fw-label">${s}</span>
-        </div>
-      `).join('');
+        </a>
+      `).join("");
     }
 
     function formatDate(dateStr) {
@@ -112,7 +111,7 @@
         const { meta, body } = parseFrontmatter(raw);
 
         // Page title
-        document.title = `${meta.title || 'Post'} — Back of the Napkin`;
+        document.title = `${meta.title || 'Post'}: Back of the Napkin`;
         document.querySelector('meta[name="description"]').content = meta.tagline || '';
 
         // Kicker
@@ -133,6 +132,12 @@
 
         // Body
         document.getElementById('post-body').innerHTML = marked.parse(body);
+        
+        // Add IDs to h2 headings for anchor navigation
+        document.querySelectorAll('#post-body h2').forEach(h => {
+          const id = h.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+          h.id = id;
+        });
 
         // Style the Make it better section
         const headers = document.querySelectorAll('.post-body h2');
