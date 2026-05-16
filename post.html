@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Back of the Napkin</title>
+  <meta name="description" content=""/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,300;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="./styles.css"/>
+  <link rel="stylesheet" href="./post.css"/>
+  <!-- marked.js for markdown parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+</head>
+<body class="post-page">
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="./index.html">back of the <span>napkin</span></a>
+    <div class="nav-availability">Wayne Kirk Schmidt · changeis.io</div>
+    <ul class="nav-links">
+      <li><a href="./index.html#posts">Insights</a></li>
+      <li><a href="./index.html#posts">Code</a></li>
+      <li><a href="./index.html#posts">Research</a></li>
+      <li><a href="./index.html#about">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- ARTICLE -->
+  <main class="post-main">
+    <div class="post-inner">
+
+      <a href="./index.html" class="post-back">← All posts</a>
+
+      <!-- HEADER — populated by JS -->
+      <header class="post-header" id="post-header">
+        <div class="post-kicker" id="post-kicker"></div>
+        <h1 class="post-title" id="post-title"></h1>
+        <p class="post-tagline" id="post-tagline"></p>
+      </header>
+
+      <!-- FRAMEWORK BAR — populated by JS -->
+      <div class="post-framework" id="post-framework"></div>
+
+      <!-- BODY — populated by JS -->
+      <div class="post-body" id="post-body"></div>
+
+      <div class="post-footnav">
+        <a href="./index.html" class="btn-ghost-dark">← Back to all posts</a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-name">Back of the Napkin</span>
+    <span class="footer-copy">© 2026 Wayne Kirk Schmidt · Boston · Tokyo · Global</span>
+    <div class="footer-links">
+      <a href="https://changeis.io">changeis.io</a>
+      <a href="https://casestudies.changeis.io">Case Studies</a>
+      <a href="https://waynekirkschmidt.me">waynekirkschmidt.me</a>
+    </div>
+  </footer>
+
+  <script>
+    const frameworks = {
+      insight:  ['Here\'s the thing.', 'Why we care.', 'What we could do.', 'What the outcome was.', 'What I learned.', 'Make it better.'],
+      code:     ['Collect', 'Organize', 'Determine', 'Evolve', 'What I learned.', 'Make it better.'],
+      research: ['Goals', 'Context', 'Results', 'What the outcome was.', 'What I learned.', 'Make it better.']
+    };
+
+    function parseFrontmatter(text) {
+      const match = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+      if (!match) return { meta: {}, body: text };
+      const meta = {};
+      match[1].split('\n').forEach(line => {
+        const [key, ...rest] = line.split(':');
+        if (key && rest.length) meta[key.trim()] = rest.join(':').trim();
+      });
+      return { meta, body: match[2] };
+    }
+
+    function buildFramework(type) {
+      const steps = frameworks[type] || frameworks.insight;
+      // Show first 4 steps as the framework bar
+      const display = steps.slice(0, 4);
+      return display.map(s => `
+        <div class="fw-step">
+          <span class="fw-label">${s}</span>
+        </div>
+      `).join('');
+    }
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    async function loadPost() {
+      const params = new URLSearchParams(window.location.search);
+      const postId = params.get('post');
+
+      if (!postId) {
+        document.getElementById('post-body').innerHTML = '<p>No post specified.</p>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`./posts/${postId}.md`);
+        if (!res.ok) throw new Error('Post not found');
+        const raw = await res.text();
+        const { meta, body } = parseFrontmatter(raw);
+
+        // Page title
+        document.title = `${meta.title || 'Post'} — Back of the Napkin`;
+        document.querySelector('meta[name="description"]').content = meta.tagline || '';
+
+        // Kicker
+        const kicker = document.getElementById('post-kicker');
+        kicker.innerHTML = [
+          meta.type   ? `<span>${meta.type}</span>` : '',
+          meta.topic  ? `<span>${meta.topic}</span>` : '',
+          meta.date   ? `<span>${formatDate(meta.date)}</span>` : ''
+        ].filter(Boolean).join('');
+
+        // Title + tagline
+        document.getElementById('post-title').textContent = meta.title || '';
+        document.getElementById('post-tagline').textContent = meta.tagline || '';
+
+        // Framework bar
+        const fw = document.getElementById('post-framework');
+        fw.innerHTML = buildFramework(meta.type);
+
+        // Body
+        document.getElementById('post-body').innerHTML = marked.parse(body);
+
+        // Style the Make it better section
+        const headers = document.querySelectorAll('.post-body h2');
+        headers.forEach(h => {
+          if (h.textContent.trim() === 'Make it better.') {
+            h.closest('div') || h.parentNode;
+            h.classList.add('make-it-better');
+          }
+        });
+
+      } catch (err) {
+        document.getElementById('post-body').innerHTML = `<p>Could not load post: ${err.message}</p>`;
+      }
+    }
+
+    loadPost();
+  </script>
+
+</body>
+</html>

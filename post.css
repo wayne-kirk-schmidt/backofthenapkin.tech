@@ -1,0 +1,234 @@
+/* ============================================================
+   post.css — backofthenapkin.tech
+   Light reading surface for post pages
+   ============================================================ */
+
+body.post-page {
+  background-image: none;
+  background-color: #f5f2ec;
+  color: #1a1a1a;
+}
+
+body.post-page nav {
+  background: rgba(15,39,66,0.95);
+}
+
+body.post-page footer {
+  background: rgba(15,39,66,0.95);
+}
+
+/* ── MAIN ── */
+.post-main {
+  padding: 4rem 2rem 5rem;
+  min-height: 80vh;
+}
+
+.post-inner {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* ── BACK ── */
+.post-back {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand);
+  text-decoration: none;
+  margin-bottom: 2.5rem;
+  transition: color 0.15s;
+}
+
+.post-back:hover { color: var(--accent); }
+
+/* ── HEADER ── */
+.post-header {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.post-kicker {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand);
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.post-kicker span + span::before {
+  content: '·';
+  margin-right: 12px;
+  opacity: 0.4;
+}
+
+.post-title {
+  font-size: clamp(1.75rem, 4vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  color: var(--ink);
+  margin-bottom: 1rem;
+}
+
+.post-tagline {
+  font-size: 1.05rem;
+  font-weight: 300;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* ── FRAMEWORK BAR ── */
+.post-framework {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid rgba(36,74,134,0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+  background: #fff;
+}
+
+.fw-step {
+  padding: 12px 16px;
+  border-right: 1px solid rgba(36,74,134,0.15);
+}
+
+.fw-step:last-child { border-right: none; }
+
+.fw-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--brand);
+  line-height: 1.4;
+  display: block;
+}
+
+/* ── BODY ── */
+.post-body {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.85;
+  color: #222;
+}
+
+.post-body p { margin-bottom: 1.25rem; }
+
+.post-body h2 {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 2.5rem 0 0.75rem;
+}
+
+.post-body h2.make-it-better {
+  color: var(--accent);
+}
+
+.post-body ul,
+.post-body ol {
+  margin: 0 0 1.25rem 1.5rem;
+}
+
+.post-body li {
+  margin-bottom: 0.5rem;
+  color: #333;
+  line-height: 1.7;
+}
+
+.post-body blockquote {
+  margin: 2rem 0;
+  padding: 1rem 1.5rem;
+  border-left: 3px solid var(--brand);
+  background: rgba(36,74,134,0.05);
+  border-radius: 0 6px 6px 0;
+  font-size: 1.05rem;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.post-body code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: rgba(36,74,134,0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--brand);
+}
+
+.post-body pre {
+  background: var(--ink);
+  color: var(--sky);
+  padding: 1.5rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+.post-body pre code {
+  background: none;
+  padding: 0;
+  color: var(--sky);
+  font-size: 0.875rem;
+}
+
+.post-body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ── MAKE IT BETTER ── */
+.post-body h2:last-of-type {
+  color: var(--accent);
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+/* ── FOOTER NAV ── */
+.post-footnav {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.btn-ghost-dark {
+  background: transparent;
+  color: var(--ink);
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.2);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  display: inline-block;
+}
+
+.btn-ghost-dark:hover {
+  background: rgba(0,0,0,0.05);
+  border-color: rgba(0,0,0,0.3);
+}
+
+/* ── MOBILE ── */
+@media (max-width: 640px) {
+  .post-main       { padding: 2.5rem 1.5rem 4rem; }
+  .post-framework  { grid-template-columns: repeat(2, 1fr); }
+  .fw-step:nth-child(2) { border-right: none; }
+  .fw-step:nth-child(3) { border-top: 1px solid rgba(36,74,134,0.15); }
+  .fw-step:nth-child(4) { border-top: 1px solid rgba(36,74,134,0.15); }
+}
