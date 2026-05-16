@@ -124,8 +124,8 @@ nav {
   height: calc(100vh - 58px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 4rem 3rem 4rem 4rem;
+  justify-content: flex-start;
+  padding: 6rem 3rem 4rem 4rem;
   border-right: 1px solid var(--border);
 }
 
