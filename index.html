@@ -17,10 +17,8 @@
     <a class="nav-logo" href="#">back of the <span>napkin</span></a>
     <div class="nav-availability">Wayne Kirk Schmidt &nbsp;·&nbsp; changeis.io</div>
     <ul class="nav-links">
-      <li><a href="#posts">Insights</a></li>
-      <li><a href="#posts">Code</a></li>
-      <li><a href="#posts">Research</a></li>
-      <li><a href="#about">About</a></li>
+      <li><a href="#posts">Entries</a></li>
+      <li><a href="mailto:wayne.kirk.schmidt@gmail.com">Contact</a></li>
     </ul>
   </nav>
 
@@ -41,99 +39,24 @@
     <div class="section-inner">
 
       <div class="section-divider">
-        <span class="section-divider-label">Latest</span>
+        <span class="section-divider-label">Entries</span>
         <div class="divider-line"></div>
       </div>
 
-      <div class="post-filters reveal">
-        <button class="filter-btn active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="insight">Insight</button>
-        <button class="filter-btn" data-filter="code">Code</button>
-        <button class="filter-btn" data-filter="research">Research</button>
-        <button class="filter-btn" data-filter="devops">DevOps</button>
-        <button class="filter-btn" data-filter="ml-ai">ML / AI</button>
-        <button class="filter-btn" data-filter="security">Security</button>
-        <button class="filter-btn" data-filter="practice">Practice</button>
-      </div>
+      <div class="posts-layout">
 
-      <div class="post-list">
+        <!-- LEFT: POST LIST -->
+        <div class="post-list" id="post-list">
+          <div class="post-loading">Loading...</div>
+        </div>
 
-        <a class="post-row reveal" href="./post.html?post=20260514.001" data-type="insight" data-topic="security">
-          <div class="post-meta">
-            <span class="post-date">May 2026</span>
-            <span class="post-type">INSIGHT</span>
+        <!-- RIGHT: PREVIEW -->
+        <div class="post-preview" id="post-preview">
+          <div class="preview-empty">
+            <p class="preview-empty-text">Select an entry to preview.</p>
           </div>
-          <div class="post-body">
-            <p class="post-title">Zero trust is not a product. It is a posture.</p>
-            <p class="post-summary">Why buying a platform does not make you secure — and what actually does.</p>
-          </div>
-          <span class="post-tag">security</span>
-        </a>
+        </div>
 
-        <a class="post-row reveal" href="#" data-type="code" data-topic="devops">
-          <div class="post-meta">
-            <span class="post-date">Apr 2026</span>
-            <span class="post-type">CODE</span>
-          </div>
-          <div class="post-body">
-            <p class="post-title">Building an adaptive observability layer from scratch.</p>
-            <p class="post-summary">Collect · Organize · Determine · Evolve — a full stack walkthrough.</p>
-          </div>
-          <span class="post-tag">devops</span>
-        </a>
-
-        <a class="post-row reveal" href="#" data-type="research" data-topic="ml-ai">
-          <div class="post-meta">
-            <span class="post-date">Mar 2026</span>
-            <span class="post-type">RESEARCH</span>
-          </div>
-          <div class="post-body">
-            <p class="post-title">What 15 engagements taught me about why transformations fail.</p>
-            <p class="post-summary">Goals, context, and what the data actually showed.</p>
-          </div>
-          <span class="post-tag">ml / ai</span>
-        </a>
-
-        <a class="post-row reveal" href="#" data-type="insight" data-topic="practice">
-          <div class="post-meta">
-            <span class="post-date">Feb 2026</span>
-            <span class="post-type">INSIGHT</span>
-          </div>
-          <div class="post-body">
-            <p class="post-title">Triage is a mindset, not a methodology.</p>
-            <p class="post-summary">The difference between diagnosis and decoration.</p>
-          </div>
-          <span class="post-tag">practice</span>
-        </a>
-
-        <a class="post-row reveal" href="#" data-type="insight" data-topic="ml-ai">
-          <div class="post-meta">
-            <span class="post-date">Dec 2025</span>
-            <span class="post-type">INSIGHT</span>
-          </div>
-          <div class="post-body">
-            <p class="post-title">Amplification vs. replacement — the only AI question worth asking.</p>
-            <p class="post-summary">What most AI conversations are getting wrong.</p>
-          </div>
-          <span class="post-tag">ml / ai</span>
-        </a>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ABOUT -->
-  <section id="about">
-    <div class="section-inner">
-      <p class="section-eyebrow reveal">About</p>
-      <h2 class="section-title reveal">The sketchpad behind the work.</h2>
-      <p class="section-intro reveal">
-        Back of the Napkin is where the thinking starts — before the engagement, before the case study, before the architecture diagram. Wayne Kirk Schmidt thinks out loud here: insights, code walkthroughs, and research, all following a simple rule. If there is an issue, there is a solution.
-      </p>
-      <div class="about-links reveal">
-        <a href="https://changeis.io" class="btn-ghost">ChangeIS</a>
-        <a href="https://casestudies.changeis.io" class="btn-ghost">Case Studies</a>
-        <a href="https://waynekirkschmidt.me" class="btn-ghost">Wayne Kirk Schmidt</a>
       </div>
     </div>
   </section>
@@ -149,29 +72,111 @@
     </div>
   </footer>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
   <script>
-    // Reveal on scroll
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.1 });
-    reveals.forEach(r => observer.observe(r));
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+    }
 
-    // Filter buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        const filter = this.dataset.filter;
-        document.querySelectorAll('.post-row').forEach(row => {
-          if (filter === 'all' || row.dataset.type === filter || row.dataset.topic === filter) {
-            row.style.display = 'grid';
-          } else {
-            row.style.display = 'none';
-          }
-        });
+    function parseFrontmatter(text) {
+      const match = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+      if (!match) return { meta: {}, body: text };
+      const meta = {};
+      match[1].split('\n').forEach(line => {
+        const [key, ...rest] = line.split(':');
+        if (key && rest.length) meta[key.trim()] = rest.join(':').trim();
       });
-    });
+      return { meta, body: match[2] };
+    }
+
+    async function loadPreview(post) {
+      const preview = document.getElementById('post-preview');
+      preview.innerHTML = '<div class="preview-loading">Loading...</div>';
+      try {
+        const res = await fetch(`./posts/${post.id}.md`);
+        const raw = await res.text();
+        const { body } = parseFrontmatter(raw);
+        // Show first section only as preview
+        const firstSection = body.split(/\n## /)[1] || body;
+        const firstSectionText = firstSection.split('\n').slice(1, 6).join('\n');
+        preview.innerHTML = `
+          <div class="preview-inner">
+            <div class="preview-kicker">
+              <span>${post.type}</span>
+              <span>${post.topic}</span>
+              <span>${formatDate(post.date)}</span>
+            </div>
+            <h2 class="preview-title">${post.title}</h2>
+            <p class="preview-tagline">${post.tagline}</p>
+            <div class="preview-excerpt">${marked.parse(firstSectionText)}</div>
+            <a href="./post.html?post=${post.id}" class="btn-ghost preview-btn">Read the full entry &rarr;</a>
+          </div>
+        `;
+      } catch(e) {
+        preview.innerHTML = `
+          <div class="preview-inner">
+            <div class="preview-kicker">
+              <span>${post.type}</span>
+              <span>${post.topic}</span>
+              <span>${formatDate(post.date)}</span>
+            </div>
+            <h2 class="preview-title">${post.title}</h2>
+            <p class="preview-tagline">${post.tagline}</p>
+            <a href="./post.html?post=${post.id}" class="btn-ghost preview-btn">Read the full entry &rarr;</a>
+          </div>
+        `;
+      }
+    }
+
+    async function loadPosts() {
+      const list = document.getElementById('post-list');
+      try {
+        const res = await fetch('./posts/index.json');
+        const posts = await res.json();
+
+        if (!posts || posts.length === 0) {
+          list.innerHTML = '<div class="coming-soon">Coming soon.</div>';
+          return;
+        }
+
+        // Show up to 6
+        const visible = posts.slice(0, 6);
+        list.innerHTML = visible.map((post, i) => `
+          <div class="post-row reveal live ${i === 0 ? 'active' : ''}" 
+               onclick="selectPost(this, ${JSON.stringify(post).replace(/"/g, '&quot;')})">
+            <div class="post-meta">
+              <span class="post-date">${formatDate(post.date)}</span>
+              <span class="post-type">${post.type.toUpperCase()}</span>
+            </div>
+            <div class="post-body">
+              <p class="post-title">${post.title}</p>
+              <p class="post-summary">${post.tagline}</p>
+            </div>
+            <span class="post-tag">${post.topic}</span>
+          </div>
+        `).join('');
+
+        // Auto-load first post preview
+        loadPreview(visible[0]);
+
+        // Reveal animation
+        setTimeout(() => {
+          document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+        }, 100);
+
+      } catch(e) {
+        list.innerHTML = '<div class="coming-soon">Coming soon.</div>';
+      }
+    }
+
+    function selectPost(el, post) {
+      document.querySelectorAll('.post-row').forEach(r => r.classList.remove('active'));
+      el.classList.add('active');
+      loadPreview(post);
+    }
+
+    loadPosts();
   </script>
 
 </body>

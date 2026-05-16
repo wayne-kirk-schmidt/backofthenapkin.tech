@@ -406,3 +406,155 @@ footer {
   .post-row     { grid-template-columns: 1fr; gap: 6px; }
   .post-tag     { display: none; }
 }
+
+/* ── TWO-COLUMN LAYOUT ── */
+.posts-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 3rem;
+  align-items: start;
+}
+
+/* ── POST LIST ── */
+.post-list { display: flex; flex-direction: column; }
+
+.post-row {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 0 16px;
+  align-items: baseline;
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.post-row.live:hover { background: var(--frost); }
+.post-row.live:hover .post-title { color: var(--white); }
+
+.post-row.active {
+  background: var(--frost-md);
+  border-bottom-color: transparent;
+}
+
+.post-row.active .post-title { color: var(--white); }
+
+/* ── PREVIEW PANEL ── */
+.post-preview {
+  position: sticky;
+  top: 80px;
+  background: var(--frost);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  min-height: 300px;
+}
+
+.preview-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.preview-empty-text {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.preview-loading {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 2rem;
+}
+
+.preview-kicker {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sky);
+  display: flex;
+  gap: 10px;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.preview-kicker span + span::before {
+  content: '·';
+  margin-right: 10px;
+  opacity: 0.4;
+}
+
+.preview-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  color: var(--white);
+  margin-bottom: 0.6rem;
+}
+
+.preview-tagline {
+  font-size: 0.875rem;
+  font-weight: 300;
+  color: var(--light);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.preview-excerpt {
+  font-size: 0.875rem;
+  font-weight: 300;
+  color: var(--light);
+  line-height: 1.75;
+  margin-bottom: 1.5rem;
+}
+
+.preview-excerpt p { margin-bottom: 0.75rem; }
+
+.preview-btn {
+  font-size: 0.85rem;
+  padding: 0.6rem 1.25rem;
+}
+
+/* ── COMING SOON ── */
+.coming-soon {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  padding: 2rem 0;
+}
+
+.post-loading {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  padding: 1rem 0;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  .posts-layout {
+    grid-template-columns: 1fr;
+  }
+  .post-preview {
+    display: none;
+  }
+  .post-row.live {
+    text-decoration: none;
+  }
+}
