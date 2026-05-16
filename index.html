@@ -17,26 +17,26 @@
     <a class="nav-logo" href="#">back of the <span>napkin</span></a>
     <div class="nav-availability">Wayne Kirk Schmidt &nbsp;·&nbsp; changeis.io</div>
     <ul class="nav-links">
-      <li><a href="#posts">Entries</a></li>
+      <li><a href="#main">Entries</a></li>
       <li><a href="mailto:wayne.kirk.schmidt@gmail.com">Contact</a></li>
     </ul>
   </nav>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-inner">
+  <!-- MAIN TWO-COLUMN LAYOUT -->
+  <main id="main" class="main-layout">
+
+    <!-- LEFT: KOAN -->
+    <aside class="koan-panel">
       <p class="hero-eyebrow">Contemplation on problems, solutions, and change. Come along.</p>
       <h1 class="hero-title">
         The problem acknowledges its solution.<br>
         <em class="mid">The solution embraces change.</em><br>
         <em>The changes sweep away false problems and solutions.</em>
       </h1>
-    </div>
-  </section>
+    </aside>
 
-  <!-- POSTS -->
-  <section id="posts">
-    <div class="section-inner">
+    <!-- RIGHT: ENTRIES + PREVIEW -->
+    <div class="entries-panel">
 
       <div class="section-divider">
         <span class="section-divider-label">Entries</span>
@@ -45,12 +45,12 @@
 
       <div class="posts-layout">
 
-        <!-- LEFT: POST LIST -->
+        <!-- ENTRY LIST -->
         <div class="post-list" id="post-list">
           <div class="post-loading">Loading...</div>
         </div>
 
-        <!-- RIGHT: PREVIEW -->
+        <!-- PREVIEW -->
         <div class="post-preview" id="post-preview">
           <div class="preview-empty">
             <p class="preview-empty-text">Select an entry to preview.</p>
@@ -59,7 +59,8 @@
 
       </div>
     </div>
-  </section>
+
+  </main>
 
   <!-- FOOTER -->
   <footer>
@@ -94,38 +95,35 @@
       const preview = document.getElementById('post-preview');
       preview.innerHTML = '<div class="preview-loading">Loading...</div>';
       try {
-        const res = await fetch(`./posts/${post.id}.md`);
+        const res = await fetch('./posts/' + post.id + '.md');
         const raw = await res.text();
         const { body } = parseFrontmatter(raw);
-        // Show first section only as preview
         const firstSection = body.split(/\n## /)[1] || body;
         const firstSectionText = firstSection.split('\n').slice(1, 6).join('\n');
-        preview.innerHTML = `
-          <div class="preview-inner">
-            <div class="preview-kicker">
-              <span>${post.type}</span>
-              <span>${post.topic}</span>
-              <span>${formatDate(post.date)}</span>
-            </div>
-            <h2 class="preview-title">${post.title}</h2>
-            <p class="preview-tagline">${post.tagline}</p>
-            <div class="preview-excerpt">${marked.parse(firstSectionText)}</div>
-            <a href="./post.html?post=${post.id}" class="btn-ghost preview-btn">Read the full entry &rarr;</a>
-          </div>
-        `;
+        preview.innerHTML =
+          '<div class="preview-inner">' +
+            '<div class="preview-kicker">' +
+              '<span>' + post.type + '</span>' +
+              '<span>' + post.topic + '</span>' +
+              '<span>' + formatDate(post.date) + '</span>' +
+            '</div>' +
+            '<h2 class="preview-title">' + post.title + '</h2>' +
+            '<p class="preview-tagline">' + post.tagline + '</p>' +
+            '<div class="preview-excerpt">' + marked.parse(firstSectionText) + '</div>' +
+            '<a href="./post.html?post=' + post.id + '" class="btn-ghost preview-btn">Read the full entry &rarr;</a>' +
+          '</div>';
       } catch(e) {
-        preview.innerHTML = `
-          <div class="preview-inner">
-            <div class="preview-kicker">
-              <span>${post.type}</span>
-              <span>${post.topic}</span>
-              <span>${formatDate(post.date)}</span>
-            </div>
-            <h2 class="preview-title">${post.title}</h2>
-            <p class="preview-tagline">${post.tagline}</p>
-            <a href="./post.html?post=${post.id}" class="btn-ghost preview-btn">Read the full entry &rarr;</a>
-          </div>
-        `;
+        preview.innerHTML =
+          '<div class="preview-inner">' +
+            '<div class="preview-kicker">' +
+              '<span>' + post.type + '</span>' +
+              '<span>' + post.topic + '</span>' +
+              '<span>' + formatDate(post.date) + '</span>' +
+            '</div>' +
+            '<h2 class="preview-title">' + post.title + '</h2>' +
+            '<p class="preview-tagline">' + post.tagline + '</p>' +
+            '<a href="./post.html?post=' + post.id + '" class="btn-ghost preview-btn">Read the full entry &rarr;</a>' +
+          '</div>';
       }
     }
 
@@ -134,35 +132,38 @@
       try {
         const res = await fetch('./posts/index.json');
         const posts = await res.json();
-
         if (!posts || posts.length === 0) {
           list.innerHTML = '<div class="coming-soon">Coming soon.</div>';
           return;
         }
-
-        // Show up to 6
         const visible = posts.slice(0, 6);
-        list.innerHTML = visible.map((post, i) => `
-          <div class="post-row reveal live ${i === 0 ? 'active' : ''}" 
-               onclick="selectPost(this, ${JSON.stringify(post).replace(/"/g, '&quot;')})">
-            <div class="post-meta">
-              <span class="post-date">${formatDate(post.date)}</span>
-              <span class="post-type">${post.type.toUpperCase()}</span>
-            </div>
-            <div class="post-body">
-              <p class="post-title">${post.title}</p>
-              <p class="post-summary">${post.tagline}</p>
-            </div>
-            <span class="post-tag">${post.topic}</span>
-          </div>
-        `).join('');
+        list.innerHTML = visible.map(function(post, i) {
+          return '<div class="post-row reveal live' + (i === 0 ? ' active' : '') + '" ' +
+            'data-id="' + post.id + '" ' +
+            'data-title="' + post.title.replace(/"/g, '&quot;') + '" ' +
+            'data-date="' + post.date + '" ' +
+            'data-type="' + post.type + '" ' +
+            'data-topic="' + post.topic + '" ' +
+            'data-tagline="' + post.tagline.replace(/"/g, '&quot;') + '" ' +
+            'onclick="selectPost(this)">' +
+            '<div class="post-meta">' +
+              '<span class="post-date">' + formatDate(post.date) + '</span>' +
+              '<span class="post-type">' + post.type.toUpperCase() + '</span>' +
+            '</div>' +
+            '<div class="post-body">' +
+              '<p class="post-title">' + post.title + '</p>' +
+              '<p class="post-summary">' + post.tagline + '</p>' +
+            '</div>' +
+            '<span class="post-tag">' + post.topic + '</span>' +
+          '</div>';
+        }).join('');
 
-        // Auto-load first post preview
         loadPreview(visible[0]);
 
-        // Reveal animation
-        setTimeout(() => {
-          document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+        setTimeout(function() {
+          document.querySelectorAll('.reveal').forEach(function(el) {
+            el.classList.add('visible');
+          });
         }, 100);
 
       } catch(e) {
@@ -170,10 +171,19 @@
       }
     }
 
-    function selectPost(el, post) {
-      document.querySelectorAll('.post-row').forEach(r => r.classList.remove('active'));
+    function selectPost(el) {
+      document.querySelectorAll('.post-row').forEach(function(r) {
+        r.classList.remove('active');
+      });
       el.classList.add('active');
-      loadPreview(post);
+      loadPreview({
+        id: el.dataset.id,
+        title: el.dataset.title,
+        date: el.dataset.date,
+        type: el.dataset.type,
+        topic: el.dataset.topic,
+        tagline: el.dataset.tagline
+      });
     }
 
     loadPosts();

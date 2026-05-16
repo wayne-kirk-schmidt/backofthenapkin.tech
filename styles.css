@@ -110,36 +110,41 @@ nav {
 
 .nav-links a:hover { color: var(--white); }
 
-/* ── HERO ── */
-.hero {
-  min-height: 88vh;
-  display: flex;
-  align-items: center;
-  padding: 5rem 2rem 3rem;
+/* ── MAIN TWO-COLUMN LAYOUT ── */
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 58px);
 }
 
-.hero-inner {
-  max-width: 780px;
-  margin: 0 auto;
-  width: 100%;
+/* ── LEFT: KOAN PANEL ── */
+.koan-panel {
+  position: sticky;
+  top: 58px;
+  height: calc(100vh - 58px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 3rem 4rem 4rem;
+  border-right: 1px solid var(--border);
 }
 
 .hero-eyebrow {
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 400;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--sky);
-  margin-bottom: 1.75rem;
+  margin-bottom: 2rem;
   opacity: 0.85;
 }
 
 .hero-title {
-  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-size: clamp(1.4rem, 2.5vw, 2.2rem);
   font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: -1px;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
   color: var(--white);
 }
 
@@ -153,6 +158,12 @@ nav {
 .hero-title em.mid {
   font-weight: 400;
   color: var(--light);
+}
+
+/* ── RIGHT: ENTRIES PANEL ── */
+.entries-panel {
+  padding: 4rem 3rem 4rem 3rem;
+  overflow-y: auto;
 }
 
 /* ── SECTIONS ── */
@@ -556,5 +567,30 @@ footer {
   }
   .post-row.live {
     text-decoration: none;
+  }
+}
+
+/* ── MOBILE OVERRIDES ── */
+@media (max-width: 768px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+  .koan-panel {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 60vh;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 1.5rem;
+  }
+  .entries-panel {
+    padding: 2.5rem 1.5rem;
+  }
+  .posts-layout {
+    grid-template-columns: 1fr;
+  }
+  .post-preview {
+    display: none;
   }
 }
