@@ -37,7 +37,11 @@
     }
 
     /* FILTERS in left panel */
-    .filter-strip { }
+    .filter-instruction {
+      font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      margin: 0.75rem 0;
+    }
     .filter-row {
       display: flex; align-items: center; gap: 0.6rem;
       margin-bottom: 0.6rem; flex-wrap: wrap;
@@ -105,6 +109,8 @@
       <p class="hero-eyebrow">Tales of DevOps, Security, and ML/AI.</p>
       <h1 class="hero-title">A practitioner's perspective.</h1>
 
+      <hr class="hero-divider"/>
+      <p class="filter-instruction">Filter below. Read on the right.</p>
       <hr class="hero-divider"/>
 
       <div class="filter-strip" id="filter-strip" style="display:none;">
