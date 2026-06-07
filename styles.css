@@ -26,7 +26,8 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--sans);
-  background-image: url('./background.png');
+  background-image: url('./background.webp');
+  background-image: image-set(url('./background.webp') 1x, url('./background.png') 1x);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
