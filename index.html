@@ -12,10 +12,7 @@
   <link rel="dns-prefetch" href="https://waynekirkschmidt.me"/>
   <link rel="stylesheet" href="./styles.css"/>
   <style>
-    /* FILTER STRIP */
-    .filter-strip {
-      margin-bottom: 1.5rem;
-    }
+    .filter-strip { margin-bottom: 1.5rem; }
     .filter-row {
       display: flex; align-items: center; gap: 0.75rem;
       margin-bottom: 0.5rem; flex-wrap: nowrap; overflow-x: auto;
@@ -25,8 +22,7 @@
     .filter-label {
       font-family: var(--mono); font-size: 0.6rem; font-weight: 500;
       letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--muted); white-space: nowrap; flex-shrink: 0;
-      width: 3rem;
+      color: var(--muted); white-space: nowrap; flex-shrink: 0; width: 3rem;
     }
     .filter-chips { display: flex; gap: 0.4rem; flex-shrink: 0; }
     .chip {
@@ -37,17 +33,14 @@
       cursor: pointer; transition: all 0.15s; white-space: nowrap;
     }
     .chip:hover { color: var(--light); border-color: rgba(255,255,255,0.25); }
-    .chip[aria-pressed="true"] {
-      background: var(--accent); border-color: var(--accent); color: var(--white);
-    }
+    .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--white); }
+    .filter-clear-row { margin-top: 0.25rem; }
     .filter-clear {
       font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.08em;
       text-transform: uppercase; color: var(--muted); background: none;
-      border: none; cursor: pointer; padding: 5px 0; transition: color 0.15s;
+      border: none; cursor: pointer; padding: 4px 0; transition: color 0.15s;
     }
     .filter-clear:hover { color: var(--light); }
-
-    /* PAGINATION */
     .pagination {
       display: flex; align-items: center; justify-content: center;
       gap: 1rem; margin-top: 2rem; padding-top: 1.5rem;
@@ -62,14 +55,10 @@
     }
     .page-btn:hover:not(:disabled) { color: var(--light); border-color: rgba(255,255,255,0.25); }
     .page-btn:disabled { opacity: 0.3; cursor: default; }
-    .page-info {
-      font-family: var(--mono); font-size: 0.68rem;
-      color: var(--muted); letter-spacing: 0.05em;
-    }
+    .page-info { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); letter-spacing: 0.05em; }
     .no-results {
       font-family: var(--mono); font-size: 0.78rem;
-      color: var(--muted); padding: 2rem 0; text-align: center;
-      letter-spacing: 0.05em;
+      color: var(--muted); padding: 2rem 0; text-align: center; letter-spacing: 0.05em;
     }
   </style>
 </head>
@@ -89,9 +78,7 @@
     <aside class="koan-panel">
       <p class="hero-eyebrow">Contemplation on problems, solutions, and change. Come along.</p>
       <h1 class="hero-title">
-        The problem acknowledges its solution.<br>
-        <em class="mid">The solution embraces change.</em><br>
-        <em>The changes sweep away false problems and solutions.</em>
+        The problem acknowledges its solution. The solution embraces change. The changes sweep away false problems and solutions.
       </h1>
     </aside>
 
@@ -102,7 +89,6 @@
         <div class="divider-line"></div>
       </div>
 
-      <!-- FILTERS -->
       <div class="filter-strip" id="filter-strip" style="display:none;">
         <div class="filter-row">
           <span class="filter-label">Type</span>
@@ -111,16 +97,16 @@
         <div class="filter-row">
           <span class="filter-label">Topic</span>
           <div class="filter-chips" id="chips-topic"></div>
-          <button class="filter-clear" id="clear-btn">Clear</button>
+        </div>
+        <div class="filter-clear-row">
+          <button class="filter-clear" id="clear-btn">Clear filters</button>
         </div>
       </div>
 
-      <!-- ENTRIES -->
       <div class="entry-list" id="post-list">
         <div class="post-loading">Loading...</div>
       </div>
 
-      <!-- PAGINATION -->
       <div class="pagination" id="pagination" style="display:none;">
         <button class="page-btn" id="btn-prev" disabled>Prev</button>
         <span class="page-info" id="page-info"></span>
@@ -154,9 +140,6 @@
     }
 
     function buildCard(post) {
-      const excerpt = post.excerpt
-        ? '<div class="entry-divider"></div><div class="entry-excerpt"><p>' + post.excerpt + '</p></div>'
-        : '';
       return '<a class="entry-card reveal" href="./post.html?post=' + post.id + '">' +
         '<div class="entry-card-header">' +
           '<div class="entry-kicker">' +
@@ -168,7 +151,6 @@
         '</div>' +
         '<h2 class="entry-title">' + post.title + '</h2>' +
         '<p class="entry-tagline">' + post.tagline + '</p>' +
-        excerpt +
         '<span class="entry-read">Read the full entry &rarr;</span>' +
       '</a>';
     }
@@ -177,10 +159,8 @@
       const types = new Set();
       const topics = new Set();
       allPosts.forEach(p => { types.add(p.type); topics.add(p.topic); });
-
       renderChips('chips-type', [...types].sort(), 'type');
       renderChips('chips-topic', [...topics].sort(), 'topic');
-
       if (types.size > 0 || topics.size > 0) {
         document.getElementById('filter-strip').style.display = '';
       }
@@ -229,7 +209,6 @@
       setTimeout(function() {
         document.querySelectorAll('.reveal').forEach(function(el) { el.classList.add('visible'); });
       }, 100);
-
       updatePagination();
     }
 
@@ -238,7 +217,6 @@
       const totalPages = Math.ceil(total / PAGE_SIZE);
       const start      = page * PAGE_SIZE + 1;
       const end        = Math.min((page + 1) * PAGE_SIZE, total);
-
       document.getElementById('page-info').textContent = start + '\u2013' + end + ' of ' + total;
       document.getElementById('btn-prev').disabled = page === 0;
       document.getElementById('btn-next').disabled = page >= totalPages - 1;
