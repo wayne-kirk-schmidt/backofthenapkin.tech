@@ -11,6 +11,67 @@
   <link rel="preload" href="./background.webp" as="image" type="image/webp"/>
   <link rel="dns-prefetch" href="https://waynekirkschmidt.me"/>
   <link rel="stylesheet" href="./styles.css"/>
+  <style>
+    /* FILTER STRIP */
+    .filter-strip {
+      margin-bottom: 1.5rem;
+    }
+    .filter-row {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 0.5rem; flex-wrap: nowrap; overflow-x: auto;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-label {
+      font-family: var(--mono); font-size: 0.6rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); white-space: nowrap; flex-shrink: 0;
+      width: 3rem;
+    }
+    .filter-chips { display: flex; gap: 0.4rem; flex-shrink: 0; }
+    .chip {
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 5px 12px;
+      background: var(--frost); border: 1px solid var(--border);
+      border-radius: 5px; color: var(--muted);
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .chip:hover { color: var(--light); border-color: rgba(255,255,255,0.25); }
+    .chip[aria-pressed="true"] {
+      background: var(--accent); border-color: var(--accent); color: var(--white);
+    }
+    .filter-clear {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); background: none;
+      border: none; cursor: pointer; padding: 5px 0; transition: color 0.15s;
+    }
+    .filter-clear:hover { color: var(--light); }
+
+    /* PAGINATION */
+    .pagination {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1rem; margin-top: 2rem; padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .page-btn {
+      font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 6px 16px;
+      background: var(--frost); border: 1px solid var(--border);
+      border-radius: 5px; color: var(--muted);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .page-btn:hover:not(:disabled) { color: var(--light); border-color: rgba(255,255,255,0.25); }
+    .page-btn:disabled { opacity: 0.3; cursor: default; }
+    .page-info {
+      font-family: var(--mono); font-size: 0.68rem;
+      color: var(--muted); letter-spacing: 0.05em;
+    }
+    .no-results {
+      font-family: var(--mono); font-size: 0.78rem;
+      color: var(--muted); padding: 2rem 0; text-align: center;
+      letter-spacing: 0.05em;
+    }
+  </style>
 </head>
 <body>
 
@@ -18,12 +79,12 @@
     <a class="nav-logo" href="#">back of the <span>napkin</span></a>
     <div class="nav-availability">Wayne Kirk Schmidt &nbsp;·&nbsp; changeis.io</div>
     <ul class="nav-links">
-      <li><a href="#main">Entries</a></li>
+      <li><a href="#entries">Entries</a></li>
       <li><a href="https://waynekirkschmidt.me">Contact</a></li>
     </ul>
   </nav>
 
-  <main id="main" class="main-layout">
+  <main class="main-layout">
 
     <aside class="koan-panel">
       <p class="hero-eyebrow">Contemplation on problems, solutions, and change. Come along.</p>
@@ -34,14 +95,38 @@
       </h1>
     </aside>
 
-    <div class="entries-panel">
+    <div class="entries-panel" id="entries">
+
       <div class="section-divider">
         <span class="section-divider-label">Entries</span>
         <div class="divider-line"></div>
       </div>
+
+      <!-- FILTERS -->
+      <div class="filter-strip" id="filter-strip" style="display:none;">
+        <div class="filter-row">
+          <span class="filter-label">Type</span>
+          <div class="filter-chips" id="chips-type"></div>
+        </div>
+        <div class="filter-row">
+          <span class="filter-label">Topic</span>
+          <div class="filter-chips" id="chips-topic"></div>
+          <button class="filter-clear" id="clear-btn">Clear</button>
+        </div>
+      </div>
+
+      <!-- ENTRIES -->
       <div class="entry-list" id="post-list">
         <div class="post-loading">Loading...</div>
       </div>
+
+      <!-- PAGINATION -->
+      <div class="pagination" id="pagination" style="display:none;">
+        <button class="page-btn" id="btn-prev" disabled>Prev</button>
+        <span class="page-info" id="page-info"></span>
+        <button class="page-btn" id="btn-next" disabled>Next</button>
+      </div>
+
     </div>
 
   </main>
@@ -57,6 +142,12 @@
   </footer>
 
   <script>
+    const PAGE_SIZE = 6;
+    let allPosts = [];
+    let filtered = [];
+    let page = 0;
+    let activeFilters = { type: new Set(), topic: new Set() };
+
     function formatDate(dateStr) {
       const d = new Date(dateStr);
       return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
@@ -66,7 +157,6 @@
       const excerpt = post.excerpt
         ? '<div class="entry-divider"></div><div class="entry-excerpt"><p>' + post.excerpt + '</p></div>'
         : '';
-
       return '<a class="entry-card reveal" href="./post.html?post=' + post.id + '">' +
         '<div class="entry-card-header">' +
           '<div class="entry-kicker">' +
@@ -83,32 +173,104 @@
       '</a>';
     }
 
-    async function loadPosts() {
-      const list = document.getElementById('post-list');
-      try {
-        const res = await fetch('./posts/index.json');
-        const posts = await res.json();
+    function buildFilters() {
+      const types = new Set();
+      const topics = new Set();
+      allPosts.forEach(p => { types.add(p.type); topics.add(p.topic); });
 
-        if (!posts || posts.length === 0) {
-          list.innerHTML = '<div class="coming-soon">Coming soon.</div>';
-          return;
-        }
+      renderChips('chips-type', [...types].sort(), 'type');
+      renderChips('chips-topic', [...topics].sort(), 'topic');
 
-        const cards = posts.slice(0, 6).map(buildCard);
-        list.innerHTML = cards.join('');
-
-        setTimeout(function() {
-          document.querySelectorAll('.reveal').forEach(function(el) {
-            el.classList.add('visible');
-          });
-        }, 100);
-
-      } catch(e) {
-        list.innerHTML = '<div class="coming-soon">Coming soon.</div>';
+      if (types.size > 0 || topics.size > 0) {
+        document.getElementById('filter-strip').style.display = '';
       }
     }
 
-    loadPosts();
+    function renderChips(containerId, values, filterKey) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      values.forEach(val => {
+        const btn = document.createElement('button');
+        btn.className = 'chip';
+        btn.textContent = val;
+        btn.setAttribute('aria-pressed', 'false');
+        btn.addEventListener('click', function() {
+          const active = activeFilters[filterKey];
+          if (active.has(val)) { active.delete(val); btn.setAttribute('aria-pressed', 'false'); }
+          else { active.add(val); btn.setAttribute('aria-pressed', 'true'); }
+          page = 0;
+          applyFilters();
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    function applyFilters() {
+      filtered = allPosts.filter(p => {
+        const typeOk  = activeFilters.type.size  === 0 || activeFilters.type.has(p.type);
+        const topicOk = activeFilters.topic.size === 0 || activeFilters.topic.has(p.topic);
+        return typeOk && topicOk;
+      });
+      renderPage();
+    }
+
+    function renderPage() {
+      const list = document.getElementById('post-list');
+      const start = page * PAGE_SIZE;
+      const slice = filtered.slice(start, start + PAGE_SIZE);
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="no-results">No entries match the selected filters.</div>';
+        document.getElementById('pagination').style.display = 'none';
+        return;
+      }
+
+      list.innerHTML = slice.map(buildCard).join('');
+      setTimeout(function() {
+        document.querySelectorAll('.reveal').forEach(function(el) { el.classList.add('visible'); });
+      }, 100);
+
+      updatePagination();
+    }
+
+    function updatePagination() {
+      const total      = filtered.length;
+      const totalPages = Math.ceil(total / PAGE_SIZE);
+      const start      = page * PAGE_SIZE + 1;
+      const end        = Math.min((page + 1) * PAGE_SIZE, total);
+
+      document.getElementById('page-info').textContent = start + '\u2013' + end + ' of ' + total;
+      document.getElementById('btn-prev').disabled = page === 0;
+      document.getElementById('btn-next').disabled = page >= totalPages - 1;
+      document.getElementById('pagination').style.display = total > PAGE_SIZE ? '' : 'none';
+    }
+
+    document.getElementById('btn-prev').addEventListener('click', function() { page--; renderPage(); });
+    document.getElementById('btn-next').addEventListener('click', function() { page++; renderPage(); });
+    document.getElementById('clear-btn').addEventListener('click', function() {
+      activeFilters = { type: new Set(), topic: new Set() };
+      document.querySelectorAll('.chip').forEach(function(c) { c.setAttribute('aria-pressed', 'false'); });
+      page = 0;
+      applyFilters();
+    });
+
+    async function boot() {
+      try {
+        const res = await fetch('./posts/index.json');
+        allPosts = await res.json();
+        if (!allPosts || allPosts.length === 0) {
+          document.getElementById('post-list').innerHTML = '<div class="no-results">Coming soon.</div>';
+          return;
+        }
+        buildFilters();
+        filtered = allPosts.slice();
+        renderPage();
+      } catch(e) {
+        document.getElementById('post-list').innerHTML = '<div class="no-results">Coming soon.</div>';
+      }
+    }
+
+    boot();
   </script>
 
 </body>
