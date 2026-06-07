@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Back of the Napkin — Wayne Kirk Schmidt</title>
-  <meta name="description" content="Contemplation on problems, solutions, and change. A practitioner's sketchpad by Wayne Kirk Schmidt."/>
+  <meta name="description" content="Tales of DevOps, Security, and ML/AI. A practitioner's perspective."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,300;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -12,19 +12,42 @@
   <link rel="dns-prefetch" href="https://waynekirkschmidt.me"/>
   <link rel="stylesheet" href="./styles.css"/>
   <style>
-    .filter-strip { margin-bottom: 1.5rem; }
-    .filter-row {
-      display: flex; align-items: center; gap: 0.75rem;
-      margin-bottom: 0.5rem; flex-wrap: nowrap; overflow-x: auto;
-      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    /* LEFT PANEL tweaks */
+    .hero-eyebrow {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      text-transform: none;
+      color: var(--light);
+      margin-bottom: 0.5rem;
     }
-    .filter-row::-webkit-scrollbar { display: none; }
+    .hero-title {
+      font-family: var(--sans);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 0;
+    }
+    .hero-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      margin: 1.5rem 0;
+    }
+
+    /* FILTERS in left panel */
+    .filter-strip { }
+    .filter-row {
+      display: flex; align-items: center; gap: 0.6rem;
+      margin-bottom: 0.6rem; flex-wrap: wrap;
+    }
     .filter-label {
       font-family: var(--mono); font-size: 0.6rem; font-weight: 500;
       letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--muted); white-space: nowrap; flex-shrink: 0; width: 3rem;
+      color: var(--muted); white-space: nowrap; width: 3rem; flex-shrink: 0;
     }
-    .filter-chips { display: flex; gap: 0.4rem; flex-shrink: 0; }
+    .filter-chips { display: flex; gap: 0.4rem; flex-wrap: wrap; }
     .chip {
       font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em;
       text-transform: uppercase; padding: 5px 12px;
@@ -34,13 +57,15 @@
     }
     .chip:hover { color: var(--light); border-color: rgba(255,255,255,0.25); }
     .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--white); }
-    .filter-clear-row { margin-top: 0.25rem; }
+    .filter-clear-row { margin-top: 0.4rem; }
     .filter-clear {
       font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.08em;
       text-transform: uppercase; color: var(--muted); background: none;
       border: none; cursor: pointer; padding: 4px 0; transition: color 0.15s;
     }
     .filter-clear:hover { color: var(--light); }
+
+    /* PAGINATION */
     .pagination {
       display: flex; align-items: center; justify-content: center;
       gap: 1rem; margin-top: 2rem; padding-top: 1.5rem;
@@ -75,19 +100,12 @@
 
   <main class="main-layout">
 
+    <!-- LEFT: tagline + filters -->
     <aside class="koan-panel">
       <p class="hero-eyebrow">Tales of DevOps, Security, and ML/AI.</p>
-      <h1 class="hero-title">
-        A practitioner's perspective.
-      </h1>
-    </aside>
+      <h1 class="hero-title">A practitioner's perspective.</h1>
 
-    <div class="entries-panel" id="entries">
-
-      <div class="section-divider">
-        <span class="section-divider-label">Entries</span>
-        <div class="divider-line"></div>
-      </div>
+      <hr class="hero-divider"/>
 
       <div class="filter-strip" id="filter-strip" style="display:none;">
         <div class="filter-row">
@@ -102,6 +120,14 @@
           <button class="filter-clear" id="clear-btn">Clear filters</button>
         </div>
       </div>
+    </aside>
+
+    <!-- RIGHT: entries -->
+    <div class="entries-panel" id="entries">
+      <div class="section-divider">
+        <span class="section-divider-label">Entries</span>
+        <div class="divider-line"></div>
+      </div>
 
       <div class="entry-list" id="post-list">
         <div class="post-loading">Loading...</div>
@@ -112,7 +138,6 @@
         <span class="page-info" id="page-info"></span>
         <button class="page-btn" id="btn-next" disabled>Next</button>
       </div>
-
     </div>
 
   </main>
@@ -198,13 +223,11 @@
       const list = document.getElementById('post-list');
       const start = page * PAGE_SIZE;
       const slice = filtered.slice(start, start + PAGE_SIZE);
-
       if (filtered.length === 0) {
         list.innerHTML = '<div class="no-results">No entries match the selected filters.</div>';
         document.getElementById('pagination').style.display = 'none';
         return;
       }
-
       list.innerHTML = slice.map(buildCard).join('');
       setTimeout(function() {
         document.querySelectorAll('.reveal').forEach(function(el) { el.classList.add('visible'); });
